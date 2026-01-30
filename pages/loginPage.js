@@ -17,8 +17,18 @@ class LoginPage {
   }
 
   async login(email, password) {
-    await this.page.fill(this.emailInput, email);
-    await this.page.fill(this.passwordInput, password);
+    // Using pressSequentially to ensure reactive forms pick up the input
+    const emailField = this.page.locator(this.emailInput);
+    await emailField.click();
+    await emailField.pressSequentially(email, { delay: 50 });
+    
+    const passwordField = this.page.locator(this.passwordInput);
+    await passwordField.click();
+    await passwordField.pressSequentially(password, { delay: 50 });
+    
+    // Wait for the button to be enabled (some apps need a bit of time)
+    await this.page.locator(this.signInButton).waitFor({ state: 'visible' });
+    
     await this.page.click(this.signInButton);
   }
 }
