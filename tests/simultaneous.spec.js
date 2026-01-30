@@ -5,7 +5,10 @@ const testData = require('../utils/testData');
 // Automatically open DevTools for every window/tab
 test.use({
   launchOptions: {
-    args: ['--auto-open-devtools-for-tabs']
+    args: [
+      '--auto-open-devtools-for-tabs',
+      '--devtools-flags=panel:network'
+    ]
   }
 });
 

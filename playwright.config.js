@@ -7,7 +7,7 @@ export const STORAGE_STATE = path.join(__dirname, '.auth/user.json');
 
 export default defineConfig({
   testDir: './tests',
-  retries: 1,
+  retries: 0,
   globalTeardown: require.resolve('./global-teardown'),
   use: {
     headless: true,

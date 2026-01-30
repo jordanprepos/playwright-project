@@ -4,7 +4,7 @@ module.exports = {
         password: 'test'
     }, urls: {
         login: 'https://bima.meta-uat.nobubank.com/#/auth/login',
-        webviewUrl: ''
+        webviewUrl: 'https://gemini.google.com/'
     }, partnerInfo: {
         partnerName: 'TEST CFX QA',
         partnerId: '86fdc92f55044068922c1763d06a2ddc',
