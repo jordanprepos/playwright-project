@@ -1,6 +1,7 @@
 // playwright.config.js
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
+import fs from 'fs';
 
 // Define the path where the session state will be stored
 export const STORAGE_STATE = path.join(__dirname, '.auth/user.json');
@@ -10,8 +11,8 @@ export default defineConfig({
   retries: 0,
   globalTeardown: require.resolve('./global-teardown'),
   use: {
-    headless: true,
-    baseURL: 'https://bima.meta-uat.nobubank.com/#/auth/login',
+    headless: false,
+    // baseURL: 'https://bima.meta-uat.nobubank.com',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
@@ -20,14 +21,18 @@ export default defineConfig({
     {
       name: 'setup',
       testMatch: /auth\.setup\.js/,
+      use: {
+        // Allow setup to read the existing state to check validity
+        storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,
+      }
     },
     // Main testing project(s)
     {
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        // Use the saved authentication state in this project
-        storageState: STORAGE_STATE,
+        // storageState is inherited or explicitly set here
+        storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,
       },
       // This project depends on 'setup' being successful
       // dependencies: ['setup'],
