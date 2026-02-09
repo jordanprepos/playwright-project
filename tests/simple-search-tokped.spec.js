@@ -6,7 +6,7 @@ const testData = require('../utils/testData');
 test.afterEach(async ({ page }) => {
     // This will keep the browser open and show the Playwright Inspector
     // regardless of whether the test passed or failed.
-    await page.pause();
+    // await page.pause();
 });
 
 test('Simple Search Tokped', async ({ page }) => {

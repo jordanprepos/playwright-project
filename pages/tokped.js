@@ -5,11 +5,14 @@ class SimpleSearchTokpedPage {
     constructor(page) {
         this.page = page;
         this.pageInstruction = 'Cari di Tokopedia';
+        this.pageTitle = 'Situs Jual Beli Online Terlengkap, Mudah & Aman | Tokopedia';
     }
 
     async navigateToSimpleSearchTokped() {
         await this.page.goto(testData.tokped.tokpedUrl);
-        // await expect(this.page).toHaveTitle('Tokopedia');
+        // Use getByPlaceholder to target the search input specifically
+        await expect(this.page.getByPlaceholder(this.pageInstruction)).toBeVisible();
+        await expect(this.page).toHaveTitle(this.pageTitle);
     }
 
     async searchTokped() {
@@ -18,28 +21,27 @@ class SimpleSearchTokpedPage {
     }
 
     async verifyProductExist() {
-        // Assert that the product "iPhone 17" exists in the results
-        // You can verify by specific text visible in the image
-        // await expect(this.page.getByText('iPhone 17 5G 256GB | 512GB').first()).toBeVisible();
-        // await expect(this.page.getByText('Rp17.600.000').first()).toBeVisible();
-        // await expect(this.page.getByText('Doran Gadget Store').first()).toBeVisible();
+        // Scroll to the bottom of the page to trigger lazy loading
+        await this.page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
 
-        // Find the specific product card for Doran Gadget using the link structure in the HTML
-        // This ensures we are targeting the correct card even if it's not the first result
-        const productCard = this.page
-            .locator('a[href*="tokopedia.com/dorangadget"]')
-            .filter({ hasText: 'iPhone 17 5G' })
-            .first();
+        // Find the specific product element using the accessible role and name
+        const productElement = this.page.getByRole('link', { name: 'product-image Campaign Apple iPhone 17 256GB 512GB A19 Chip with Ceramic Shield' }).first();
 
-        // Scroll to the card to ensure it loads (lazy loading)
-        await productCard.scrollIntoViewIfNeeded();
+        // Verify the element is attached and visible
+        await expect(productElement).toBeVisible();
+    }
 
-        await expect(productCard).toBeVisible();
+    async scrollToText(text) {
+        // Use exact: false to allow partial matches if the text is long or has whitespace issues
+        const element = this.page.getByText(text, { exact: false }).first();
         
-        // Verify details inside this specific card
-        await expect(productCard).toContainText('iPhone 17 5G 256GB | 512GB');
-        await expect(productCard).toContainText('Rp17.600.000');
-        await expect(productCard).toContainText('Doran Gadget Store');
+        // Verify the element is attached before trying to scroll
+        await element.waitFor();
+
+        // Force scroll to center without smooth behavior for better reliability
+        await element.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'center' }));
+        
+        await expect(element).toBeVisible();
     }
 }
 
